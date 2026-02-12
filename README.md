@@ -1,28 +1,143 @@
-# ml-business-applications-project
 # Machine Learning Business Applications Project
 
-## Part 1: House Price Prediction
-Linear Regression model predicting house prices using square footage and neighborhood.
-Dataset: Kaggle Ames Housing Dataset
+This project demonstrates practical applications of machine learning in business analytics using real-world datasets (100+ records each).
 
-## Part 2: Customer Churn Prediction
-Logistic Regression model predicting churn probability.
-Dataset: Telco Customer Churn Dataset (IBM Sample)
+---
 
-## Part 3: Customer Segmentation
-K-Means clustering using RFM analysis.
-Dataset: UCI Online Retail Dataset
+# 📂 Project Structure
 
-## Extra Credit: Housing Demand Forecasting
-Linear Regression time-series forecast for next 6 months.
-Dataset: Zillow Research Housing Data
 
-## Tools Used
-- Python
+---
+
+# ✅ Part 1: House Price Prediction
+
+**Goal:** Predict house sale prices based on square footage and neighborhood.  
+**Model:** Linear Regression  
+**Dataset Size:** ~1,460 records  
+
+**Dataset Source:**  
+Kaggle – Ames Housing Dataset  
+https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/data  
+
+**Key Features Used:**
+- GrLivArea (square footage)
+- Neighborhood (categorical location variable)
+
+**Outputs:**
+- MAE and R² performance metrics
+- Predicted price for 2000 sq ft house
+- Feature coefficient impact summary
+
+Run:
+
+---
+
+# ✅ Part 2: Customer Churn Prediction
+
+**Goal:** Predict probability that a customer will churn.  
+**Model:** Logistic Regression  
+**Dataset Size:** 7,000+ customers  
+
+**Dataset Source:**  
+Telco Customer Churn (IBM Sample Dataset)  
+https://www.kaggle.com/datasets/blastchar/telco-customer-churn  
+
+**Techniques Used:**
+- StandardScaler (numerical features)
+- OneHotEncoder (categorical features)
+- Train/test split with stratification
+- Probability threshold classification (0.5)
+
+**Outputs:**
+- Accuracy
+- ROC AUC
+- Classification report
+- Churn probability prediction for a new customer
+- Feature impact coefficients
+
+Run:
+
+---
+
+# ✅ Part 3: Customer Segmentation
+
+**Goal:** Segment customers using purchasing behavior.  
+**Method:** K-Means Clustering with RFM analysis  
+**Dataset Size:** 500,000+ transactions  
+
+**Dataset Source:**  
+UCI Online Retail Dataset  
+https://archive.ics.uci.edu/ml/datasets/Online+Retail  
+
+**Features Created:**
+- Recency
+- Frequency
+- Monetary value
+
+**Outputs:**
+- Elbow plot (`elbow_plot.png`)
+- Cluster summary statistics
+- Marketing strategy suggestions
+- CSV file of cluster assignments (`customer_segments.csv`)
+
+Run:
+
+---
+
+# ⭐ Extra Credit: Housing Demand Forecasting
+
+**Goal:** Forecast housing demand for the next 6 months.  
+**Model:** Linear Regression (time index feature)  
+**Dataset Requirement:** 100+ months of historical housing demand data  
+
+**Example Data Source:**  
+Zillow Research Data  
+https://www.zillow.com/research/data/  
+
+**Outputs:**
+- Demand forecast plot (`demand_forecast.png`)
+- 6-month forecast CSV
+- Assumptions and improvement discussion
+
+Run:
+
+---
+
+# 📥 Dataset Instructions
+
+Download each dataset and place the file in the root project folder before running scripts.
+
+Required filenames:
+
+- `train.csv`
+- `WA_Fn-UseC_-Telco-Customer-Churn.csv`
+- `online_retail.csv`
+- `housing_demand.csv`
+
+---
+
+# 🛠 Installation
+
+Install required packages:
+
+
+Or manually:
+
+
+---
+
+# 📊 Technologies Used
+
+- Python 3
 - Pandas
-- Scikit-Learn
+- NumPy
+- Scikit-learn
 - Matplotlib
 
-## Author
-Nicole Brownen
-San José State University
+---
+
+# 👩‍🎓 Author
+
+Nicole Brownen  
+San José State University  
+Business MIS Program
