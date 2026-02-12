@@ -1,55 +1,54 @@
+# Customer Segmentation using K-Means (RFM)
+# Data Source:
+# UCI Online Retail Dataset
+# https://archive.ics.uci.edu/ml/datasets/Online+Retail
+
 import pandas as pd
 import numpy as np
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
-# Generate sample customer data
-data = {
-'annual_spending': [500, 1200, 300, 1500, 800, 200, 1000, 600, 1300, 400],
-'purchase_frequency': [5, 12, 3, 15, 8, 2, 10, 6, 13, 4],
-'age': [25, 34, 45, 28, 52, 36, 41, 29, 47, 33],
-'region': ['North', 'South', 'West', 'East', 'South', 'North', 'West', 'East',
-'South', 'North']
-}
-df = pd.DataFrame(data)
-# Preprocess data: Select numerical features and scale them
-features = ['annual_spending', 'purchase_frequency', 'age']
-X = df[features]
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+
+df = pd.read_csv("online_retail.csv")
+
+df = df.dropna(subset=["CustomerID"])
+df = df[df["Quantity"] > 0]
+df["TotalPrice"] = df["Quantity"] * df["UnitPrice"]
+df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
+
+snapshot_date = df["InvoiceDate"].max() + pd.Timedelta(days=1)
+
+rfm = df.groupby("CustomerID").agg({
+    "InvoiceDate": lambda x: (snapshot_date - x.max()).days,
+    "InvoiceNo": "nunique",
+    "TotalPrice": "sum"
+}).reset_index()
+
+rfm.columns = ["CustomerID", "Recency", "Frequency", "Monetary"]
+
+# Scale
 scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-# Determine optimal number of clusters using elbow method
+X_scaled = scaler.fit_transform(rfm[["Recency", "Frequency", "Monetary"]])
+
+# Elbow method
 inertia = []
-K = range(1, 6)
-for k in K:
-kmeans = KMeans(n_clusters=k, random_state=42)
-kmeans.fit(X_scaled)
-inertia.append(kmeans.inertia_)
-# Plot elbow curve
-plt.figure(figsize=(8, 5))
-plt.plot(K, inertia, 'bo-')
-plt.xlabel('Number of Clusters (K)')
-plt.ylabel('Inertia')
-plt.title('Elbow Method for Optimal K')
-plt.savefig('elbow_plot.png')
+for k in range(1, 7):
+    km = KMeans(n_clusters=k, random_state=42, n_init="auto")
+    km.fit(X_scaled)
+    inertia.append(km.inertia_)
+
+plt.plot(range(1,7), inertia)
+plt.xlabel("K")
+plt.ylabel("Inertia")
+plt.title("Elbow Method")
+plt.savefig("elbow_plot.png")
 plt.close()
-# Apply K-Means with optimal K (e.g., 3 based on elbow method)
-optimal_k = 3
-kmeans = KMeans(n_clusters=optimal_k, random_state=42)
-df['cluster'] = kmeans.fit_predict(X_scaled)
-# Analyze clusters
-cluster_summary = df.groupby('cluster')[features].mean().round(2)
-print("Cluster Characteristics:")
-print(cluster_summary)
-# Example of targeted strategies
-for cluster in range(optimal_k):
-print(f"\nCluster {cluster} Strategy:")
-if cluster_summary.loc[cluster, 'annual_spending'] > 1000:
-print("High-spending customers: Offer exclusive promotions or loyalty
-rewards.")
-elif cluster_summary.loc[cluster, 'purchase_frequency'] > 10:
-print("Frequent buyers: Provide bulk discounts or subscription plans.")
-else:
-print("Low-engagement customers: Send personalized re-engagement
-campaigns.")
-# Save cluster assignments to CSV
-df.to_csv('customer_segments.csv', index=False)
+
+# Final model
+kmeans = KMeans(n_clusters=3, random_state=42, n_init="auto")
+rfm["Cluster"] = kmeans.fit_predict(X_scaled)
+
+print("\nCluster Summary:")
+print(rfm.groupby("Cluster")[["Recency","Frequency","Monetary"]].mean())
+
+rfm.to_csv("customer_segments.csv", index=False)
